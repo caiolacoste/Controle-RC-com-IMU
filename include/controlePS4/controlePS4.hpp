@@ -5,6 +5,7 @@
 #include <PS4Controller.h> // Biblioteca PS4-esp32 por aed3
 #include <locomocao/locomocaoNova.hpp>
 #include <sinalizacao/fitaDeLED.hpp> // Arquivo com função para ligar LED
+#include <sensoriamento/IMU.hpp>
 #include <cmath> // Para poder utilizar arctan
 
 #pragma once
@@ -120,10 +121,10 @@ namespace controlePS4 {
         locomocao::dirigir(velocidadeEsquerda, velocidadeDireita);
 
         if (PS4.Cross()) {
-            led::ligarLed();
+            digitalWrite(2, HIGH);
         }
         else if (PS4.Circle()) {
-            led::desligarLed();
+            digitalWrite(2, LOW);
         }
     }
     // Função que utiliza o analógico esquerdo para rodar o robô e os botões L2/R2 para mover linearmente
@@ -141,8 +142,10 @@ namespace controlePS4 {
         if (abs(eixoX) >= 0.8 || abs(eixoY) >= 0.8){
             anguloJoystick = atan2(eixoY,eixoX) * 180 / M_PI;
         }
-        // Serial.print("Angulo do controle: ");
-        // Serial.println(anguloJoystick);
+        Serial.print("Angulo do controle: ");
+        Serial.print(anguloJoystick);
+        Serial.print(", ângulo do IMU: ");
+        Serial.println(IMU::anguloNormalizado);
 
         // Atualiza velocidade linear com os botões L2 e R2
         if (PS4.R2() || PS4.L2()){
@@ -165,10 +168,10 @@ namespace controlePS4 {
         locomocao::dirigir(velocidadeEsquerda, velocidadeDireita);
 
         if (PS4.Cross()) {
-            led::ligarLed();
+            digitalWrite(2, HIGH);
         }
         else if (PS4.Circle()) {
-            led::desligarLed();
+            digitalWrite(2, LOW);
         }
     }
 
