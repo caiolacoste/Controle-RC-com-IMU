@@ -222,7 +222,7 @@ namespace controlePS4 {
                     velocidadeDireita = -255;
                     velocidadeEsquerda = 255; 
                 }
-                if (quadranteIMU == 4){
+                if (quadranteIMU == 4 || quadranteIMU == 3){
                     velocidadeDireita = 255;
                     velocidadeEsquerda = -255; 
                 }
@@ -232,7 +232,7 @@ namespace controlePS4 {
                     velocidadeDireita = -255;
                     velocidadeEsquerda = 255; 
                 }
-                if (quadranteIMU == 1){
+                if (quadranteIMU == 1 || quadranteIMU == 4){
                     velocidadeDireita = 255;
                     velocidadeEsquerda = -255; 
                 }
@@ -242,7 +242,7 @@ namespace controlePS4 {
                     velocidadeDireita = -255;
                     velocidadeEsquerda = 255; 
                 }
-                if (quadranteIMU == 2){
+                if (quadranteIMU == 2 || quadranteIMU == 1){
                     velocidadeDireita = 255;
                     velocidadeEsquerda = -255; 
                 }
@@ -252,11 +252,54 @@ namespace controlePS4 {
                     velocidadeDireita = -255;
                     velocidadeEsquerda = 255; 
                 }
-                if (quadranteIMU == 3){
+                if (quadranteIMU == 3 || quadranteIMU == 2){
                     velocidadeDireita = 255;
                     velocidadeEsquerda = -255; 
                 }
             }
+            else if (quadranteJoystick == quadranteIMU){
+                if (quadranteJoystick <=2){
+                    if (abs(erroAngular) >=5 && erroAngular >= 0){
+                        velocidadeDireita = 255;
+                        velocidadeEsquerda = -255;
+                    }
+                    else if(abs(erroAngular) >=5 && erroAngular < 0){
+                        velocidadeDireita = -255;
+                        velocidadeEsquerda = 255;
+                    }    
+                }
+                else if (quadranteJoystick >2){
+                    if (abs(erroAngular) >=5 && erroAngular >= 0){
+                        velocidadeDireita = -255;
+                        velocidadeEsquerda = 255;
+                    }
+                    else if(abs(erroAngular) >=5 && erroAngular < 0){
+                        velocidadeDireita = 255;
+                        velocidadeEsquerda = -255;
+                    } 
+                }
+            }
+        }
+
+        // Serial.print("Velocidade esquerda: ");
+        // Serial.print(velocidadeEsquerda);
+        // Serial.print(", velocidade direita: ");
+        // Serial.println(velocidadeDireita);
+
+        if (velocidadeDireita == 255 && velocidadeEsquerda == -255){
+            Serial.println("Virando no sentido horário;");
+        }
+        else if (velocidadeDireita == -255 && velocidadeEsquerda == 255){
+            Serial.println("Virando no sentido anti-horário;");
+        }
+        else if (velocidadeDireita == 255 && velocidadeEsquerda == 255){
+            Serial.println("Andando em linha reta;");
+        }
+        else if (velocidadeDireita == -255 && velocidadeEsquerda == -255){
+            Serial.println("Andando de ré;");
+        }
+        else{
+            Serial.println(" ");
         }
 
         locomocao::dirigir(velocidadeEsquerda, velocidadeDireita);
