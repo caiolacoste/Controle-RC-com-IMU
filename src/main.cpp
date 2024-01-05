@@ -6,7 +6,6 @@
 #include <PS4Controller.h> // Biblioteca PS4-esp32 por aed3
 
 #include <locomocao/locomocaoNova.hpp>
-#include <sinalizacao/fitaDeLED.hpp>
 #include <sensoriamento/IMU.hpp>
 #include <controlePS4/controlePS4.hpp>
 

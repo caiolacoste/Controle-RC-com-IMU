@@ -54,7 +54,7 @@ namespace IMU {
         // Serial.print(angleY);
 
         angleZ = mpu6050.getAngleZ();
-        anguloNormalizado = normalizarAngulo(angleZ);
+        anguloNormalizado = normalizarAngulo(angleZ+90);
 
         // Serial.print("\tangleZ: ");
         // Serial.print(angleZ);

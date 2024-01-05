@@ -4,7 +4,6 @@
 
 #include <PS4Controller.h> // Biblioteca PS4-esp32 por aed3
 #include <locomocao/locomocaoNova.hpp>
-#include <sinalizacao/fitaDeLED.hpp> // Arquivo com função para ligar LED
 #include <sensoriamento/IMU.hpp>
 #include <cmath> // Para poder utilizar arctan
 
@@ -24,7 +23,11 @@ namespace controlePS4 {
     // Variáveis para cálculo do ângulo do analógico
     double eixoX;
     double eixoY;
-    double anguloJoystick = 0.;
+    double anguloJoystick = 90.;
+    // Variáveis para o cálculo da velocidade angular
+    double erroAngular = 0;
+    int quadranteJoystick = 0;
+    int quadranteIMU = 0;
 
 
     // Número MAC do controle do Renan para conexão com o controle
@@ -139,13 +142,53 @@ namespace controlePS4 {
         eixoX = mapDouble(analogLX, -128,127,-1,1);
         // Serial.println("eixo X: " + String(eixoX) + ", eixo Y: " + String(eixoY));
 
+        // Atualiza o ângulo do joystick caso ele seja direcionado em alguma direção (valor maior que 0.8)
         if (abs(eixoX) >= 0.8 || abs(eixoY) >= 0.8){
             anguloJoystick = atan2(eixoY,eixoX) * 180 / M_PI;
         }
-        Serial.print("Angulo do controle: ");
-        Serial.print(anguloJoystick);
-        Serial.print(", ângulo do IMU: ");
-        Serial.println(IMU::anguloNormalizado);
+        
+        // Atualiza o valor do erro com base no analógico e no carro (IMU)
+        erroAngular = anguloJoystick - IMU::anguloNormalizado;
+
+        // Define em que quadrante do plano cartesiano o joystick está apontando
+        if (anguloJoystick >=0 && anguloJoystick < 90){
+            quadranteJoystick = 1;
+        }
+        else if (anguloJoystick >= 90){
+            quadranteJoystick = 2;
+        }
+        else if (anguloJoystick < 0 && anguloJoystick > -90)
+        {
+            quadranteJoystick = 4;
+        }
+        else if (anguloJoystick <= -90){
+            quadranteJoystick = 3;
+        }
+        // Define em que quadrante do plano cartesiano o IMU está apontando
+        if (IMU::anguloNormalizado >=0 && IMU::anguloNormalizado < 90){
+            quadranteIMU = 1;
+        }
+        else if (IMU::anguloNormalizado >= 90){
+            quadranteIMU = 2;
+        }
+        else if (IMU::anguloNormalizado < 0 && IMU::anguloNormalizado > -90)
+        {
+            quadranteIMU = 4;
+        }
+        else if (IMU::anguloNormalizado <= -90){
+            quadranteIMU = 3;
+        }
+        // Serial.print("Quadrante Joystick: ");
+        // Serial.print(quadranteJoystick);
+        // Serial.print(", quadrante IMU: ");
+        // Serial.println(quadranteIMU);
+
+        // Serial.print("Angulo do controle: ");
+        // Serial.print(anguloJoystick);
+        // Serial.print(", ângulo do IMU: ");
+        // Serial.print(IMU::anguloNormalizado);
+        // Serial.print(", erro do ângulo: ");
+        // Serial.println(erroAngular);
 
         // Atualiza velocidade linear com os botões L2 e R2
         if (PS4.R2() || PS4.L2()){
@@ -160,9 +203,60 @@ namespace controlePS4 {
                 velocidadeEsquerda = -255;
             }
         }
+        // Caso não esteja indo para frente ou trás, faz o cálculo para rotação
         else{
             velocidadeDireita = 0;
             velocidadeEsquerda = 0;
+
+            // if (abs(erroAngular) >=5 && erroAngular >= 0){
+            //     velocidadeDireita = 255;
+            //     velocidadeEsquerda = -255;
+            // }
+            // else if(abs(erroAngular) >=5 && erroAngular < 0){
+            //     velocidadeDireita = -255;
+            //     velocidadeEsquerda = 255;
+            // }
+
+            if (quadranteJoystick == 1){
+                if (quadranteIMU == 2){
+                    velocidadeDireita = -255;
+                    velocidadeEsquerda = 255; 
+                }
+                if (quadranteIMU == 4){
+                    velocidadeDireita = 255;
+                    velocidadeEsquerda = -255; 
+                }
+            }
+            else if (quadranteJoystick == 2){
+                if (quadranteIMU == 3){
+                    velocidadeDireita = -255;
+                    velocidadeEsquerda = 255; 
+                }
+                if (quadranteIMU == 1){
+                    velocidadeDireita = 255;
+                    velocidadeEsquerda = -255; 
+                }
+            }
+            else if (quadranteJoystick == 3){
+                if (quadranteIMU == 4){
+                    velocidadeDireita = -255;
+                    velocidadeEsquerda = 255; 
+                }
+                if (quadranteIMU == 2){
+                    velocidadeDireita = 255;
+                    velocidadeEsquerda = -255; 
+                }
+            }
+            else if (quadranteJoystick == 4){
+                if (quadranteIMU == 1){
+                    velocidadeDireita = -255;
+                    velocidadeEsquerda = 255; 
+                }
+                if (quadranteIMU == 3){
+                    velocidadeDireita = 255;
+                    velocidadeEsquerda = -255; 
+                }
+            }
         }
 
         locomocao::dirigir(velocidadeEsquerda, velocidadeDireita);
