@@ -172,7 +172,6 @@ namespace controlePS4 {
         else{
             velocidadeDireita = 0;
             velocidadeEsquerda = 0;
-
             // Caso o erro seja maior que 180, ele precisa andar para aumentar o erro, até que passe para um valor menor
             if (abs(erroAngular) > 180){
                 if (erroAngular >=0){
@@ -180,7 +179,7 @@ namespace controlePS4 {
                     velocidadeEsquerda = 255;
                     velocidadeDireita = -255;
                 }
-                else{
+                else {
                     // Vira no sentido anti-horário
                     velocidadeEsquerda = -255;
                     velocidadeDireita = 255;
@@ -197,31 +196,6 @@ namespace controlePS4 {
                     // Vira no sentido horário
                     velocidadeDireita = -255;
                     velocidadeEsquerda = 255;
-                }
-            }
-
-            
-
-            if (quadranteJoystick == quadranteIMU){
-                if (quadranteJoystick <=2){
-                    if (abs(erroAngular) >=5 && erroAngular >= 0){
-                        velocidadeDireita = 255;
-                        velocidadeEsquerda = -255;
-                    }
-                    else if(abs(erroAngular) >=5 && erroAngular < 0){
-                        velocidadeDireita = -255;
-                        velocidadeEsquerda = 255;
-                    }    
-                }
-                else if (quadranteJoystick >2){
-                    if (abs(erroAngular) >=5 && erroAngular >= 0){
-                        velocidadeDireita = -255;
-                        velocidadeEsquerda = 255;
-                    }
-                    else if(abs(erroAngular) >=5 && erroAngular < 0){
-                        velocidadeDireita = 255;
-                        velocidadeEsquerda = -255;
-                    } 
                 }
             }
         }
