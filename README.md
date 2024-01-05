@@ -229,7 +229,7 @@ Como o ângulo pode passar de 180 para -180 e vice-versa, é necessária uma ló
 Dessa forma, é feito um if/else para ver esse valor e dependendo do lado, o carro vai para um sentido ou para o outro:
 
 ```cpp
-// Caso o erro seja maior que 180, ele precisa andar para aumentar o erro, até que passe para um valor menor
+// Caso o erro seja maior que 180, ele precisa andar para aumentar o erro
 if (abs(erroAngular) > 180){
     if (erroAngular >=0){
         // Vira no sentido horário
@@ -266,6 +266,8 @@ locomocao::dirigir(velocidadeEsquerda, velocidadeDireita);
 ## Resultados
 
 Os resultados no robô podem ser visto no vídeo abaixo:
+
+https://youtu.be/ffggiAu96MU?si=m8NaGYVfthXrOxeu
 
 ## Conclusões
 
